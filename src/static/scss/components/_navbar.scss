@@ -1,0 +1,35 @@
+.nav-wrapper {
+  width: 100%;
+  border-bottom: 10px solid rgba(0, 0, 0, 0.05);
+
+  .nav-container {
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    .logo {
+      width: 171px;
+      height: 34px;
+    }
+
+    .nav-content {
+      display: flex;
+      gap: 40px;
+
+      .nav-title {
+        font-size: 20px;
+        text-decoration: none;
+        color: #333333;
+      }
+
+      .active-nav-title {
+        color: #83c518;
+        border-bottom: 3px solid #83c518;
+      }
+    }
+    .button {
+      font-size: 16px;
+    }
+  }
+}

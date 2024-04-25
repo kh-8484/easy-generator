@@ -1,0 +1,381 @@
+@function str-replace($string, $search, $replace: "") {
+  $index: str-index($string, $search);
+
+  @if $index {
+    @return str-slice($string, 1, $index - 1) + $replace +
+      str-replace(
+        str-slice($string, $index + str-length($search)),
+        $search,
+        $replace
+      );
+  }
+
+  @return $string;
+}
+
+// To include custom font
+@mixin font-face(
+  $name,
+  $path,
+  $weight: null,
+  $style: null,
+  $exts: eot woff2 woff ttf svg
+) {
+  $src: null;
+
+  $extmods: (
+    eot: "?",
+    svg: "#" + str-replace($name, " ", "_"),
+  );
+
+  $formats: (
+    otf: "opentype",
+    ttf: "truetype",
+  );
+
+  @each $ext in $exts {
+    $extmod: if(
+      map-has-key($extmods, $ext),
+      $ext + map-get($extmods, $ext),
+      $ext
+    );
+    $format: if(map-has-key($formats, $ext), map-get($formats, $ext), $ext);
+    $src: append(
+      $src,
+      url(quote($path + "." + $extmod)) format(quote($format)),
+      comma
+    );
+  }
+
+  @font-face {
+    font-family: quote($name);
+    font-style: $style;
+    font-weight: $weight;
+    src: $src;
+  }
+}
+
+@mixin fa-icon() {
+  display: inline-block;
+  font: normal normal normal #{$fa-font-size-base}/#{$fa-line-height-base}
+    FontAwesome; // shortening font declaration
+  font-size: inherit; // can't have font-size inherit on line above, so need to override
+  text-rendering: auto; // optimizelegibility throws things off #1094
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@mixin fa-icon-rotate($degrees, $rotation) {
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=#{$rotation})";
+  -webkit-transform: rotate($degrees);
+  -ms-transform: rotate($degrees);
+  transform: rotate($degrees);
+}
+
+@mixin fa-icon-flip($horiz, $vert, $rotation) {
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=#{$rotation}, mirror=1)";
+  -webkit-transform: scale($horiz, $vert);
+  -ms-transform: scale($horiz, $vert);
+  transform: scale($horiz, $vert);
+}
+
+// Only display content to screen readers. A la Bootstrap 4.
+//
+// See: http://a11yproject.com/posts/how-to-hide-content/
+
+@mixin sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+// Use in conjunction with .sr-only to only display content when it's focused.
+//
+// Useful for "Skip to main content" links; see http://www.w3.org/TR/2013/NOTE-WCAG20-TECHS-20130905/G1
+//
+// Credit: HTML5 Boilerplate
+
+@mixin sr-only-focusable {
+  &:active,
+  &:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+  }
+}
+
+// Classes included margin & padding top,bottom from 10px to 50px
+@for $i from 1 to 10 {
+  .m-tb-#{$i} {
+    margin: #{$i}rem 0;
+  }
+  .p-tb-#{$i} {
+    padding: #{$i}rem 0;
+  }
+  .m-t-#{$i} {
+    margin-top: #{$i}rem;
+  }
+  .m-b-#{$i} {
+    margin-bottom: #{$i}rem;
+  }
+  .p-t-#{$i} {
+    padding-top: #{$i}rem;
+  }
+  .p-b-#{$i} {
+    padding-bottom: #{$i}rem;
+  }
+  .m-lr-#{$i} {
+    margin: 0 #{$i}rem;
+  }
+  .p-lr-#{$i} {
+    padding: 0 #{$i}rem;
+  }
+  .m-l-#{$i} {
+    margin-left: #{$i}rem;
+  }
+  .m-r-#{$i} {
+    margin-right: #{$i}rem;
+  }
+  .p-l-#{$i} {
+    padding-left: #{$i}rem;
+  }
+  .p-r-#{$i} {
+    padding-right: #{$i}rem;
+  }
+
+  $i: $i + 0.5;
+}
+
+@mixin border-defaults() {
+  .brd {
+    &-no {
+      border: 0;
+
+      &-l {
+        border-left: 0;
+      }
+      &-r {
+        border-right: 0;
+      }
+      &-t {
+        border-top: 0;
+      }
+      &-b {
+        border-bottom: 0;
+      }
+      &-lr {
+        border-left: 0;
+        border-right: 0;
+      }
+      &-tb {
+        border-top: 0;
+        border-bottom: 0;
+      }
+    }
+
+    &-1 {
+      border-width: 1px;
+    }
+    &-2 {
+      border-width: 2px;
+    }
+    &-3 {
+      border-width: 3px;
+    }
+    &-4 {
+      border-width: 4px;
+    }
+    &-5 {
+      border-width: 5px;
+    }
+  }
+}
+
+@mixin border-variant($suffix, $color) {
+  @if $suffix != "" {
+    $suffix: "-" + $suffix;
+  }
+  .brd#{$suffix} {
+    border: 1px solid #{$color};
+
+    &-l {
+      border-left: 1px solid #{$color};
+    }
+    &-r {
+      border-right: 1px solid #{$color};
+    }
+    &-t {
+      border-top: 1px solid #{$color};
+    }
+    &-b {
+      border-bottom: 1px solid #{$color};
+    }
+    &-lr {
+      border-left: 1px solid #{$color};
+      border-right: 1px solid #{$color};
+    }
+    &-tb {
+      border-top: 1px solid #{$color};
+      border-bottom: 1px solid #{$color};
+    }
+  }
+}
+
+@mixin border-radius-variant($suffix, $size) {
+  .brdr-#{$suffix} {
+    -webkit-border-radius: #{$size}px;
+    -moz-border-radius: #{$size}px;
+    border-radius: #{$size}px;
+  }
+  .brdr-tl-#{$suffix} {
+    -webkit-border-top-left-radius: #{$size}px;
+    -moz-border-radius-topleft: #{$size}px;
+    border-top-left-radius: #{$size}px;
+  }
+  .brdr-tr-#{$suffix} {
+    -webkit-border-top-right-radius: #{$size}px;
+    -moz-border-radius-topright: #{$size}px;
+    border-top-right-radius: #{$size}px;
+  }
+  .brdr-bl-#{$suffix} {
+    -webkit-border-bottom-left-radius: #{$size}px;
+    -moz-border-radius-bottomleft: #{$size}px;
+    border-bottom-left-radius: #{$size}px;
+  }
+  .brdr-br-#{$suffix} {
+    -webkit-border-bottom-left-radius: #{$size}px;
+    -moz-border-radius-bottomleft: #{$size}px;
+    border-bottom-left-radius: #{$size}px;
+  }
+}
+
+@mixin _spacing-variant($prefix, $suffix, $property, $size) {
+  .#{$prefix}-#{$suffix} {
+    #{$property}: #{$size}px;
+  }
+
+  .#{$prefix}-l-#{$suffix} {
+    #{$property}-left: #{$size}px;
+  }
+  .#{$prefix}-r-#{$suffix} {
+    #{$property}-right: #{$size}px;
+  }
+  .#{$prefix}-t-#{$suffix} {
+    #{$property}-top: #{$size}px;
+  }
+  .#{$prefix}-b-#{$suffix} {
+    #{$property}-bottom: #{$size}px;
+  }
+  .#{$prefix}-lr-#{$suffix} {
+    #{$property}-left: #{$size}px;
+    #{$property}-right: #{$size}px;
+  }
+  .#{$prefix}-tb-#{$suffix} {
+    #{$property}-top: #{$size}px;
+    #{$property}-bottom: #{$size}px;
+  }
+}
+
+@mixin padding-variant($suffix, $size) {
+  @include _spacing-variant("p", $suffix, "padding", $size);
+}
+
+@mixin margin-variant($suffix, $size) {
+  @include _spacing-variant("m", $suffix, "margin", $size);
+}
+
+@mixin background-color-variant($suffix, $color) {
+  .bg-#{$suffix} {
+    background-color: #{$color};
+  }
+}
+
+@mixin text-variant($suffix, $color) {
+  .text-#{$suffix} {
+    color: #{$color};
+  }
+}
+
+@mixin width-variants($prefix) {
+  /**
+    * Tweleve
+    */
+  .#{$prefix}-1-12 {
+    width: 8.333% !important;
+  }
+  .#{$prefix}-2-12 {
+    width: 16.666% !important;
+  }
+  .#{$prefix}-3-12 {
+    width: 25% !important;
+  }
+  .#{$prefix}-4-12 {
+    width: 33.333% !important;
+  }
+  .#{$prefix}-5-12 {
+    width: 41.666% !important;
+  }
+  .#{$prefix}-6-12 {
+    width: 50% !important;
+  }
+  .#{$prefix}-7-12 {
+    width: 58.333% !important;
+  }
+  .#{$prefix}-8-12 {
+    width: 66.666% !important;
+  }
+  .#{$prefix}-9-12 {
+    width: 75% !important;
+  }
+  .#{$prefix}-10-12 {
+    width: 83.333% !important;
+  }
+  .#{$prefix}-11-12 {
+    width: 91.666% !important;
+  }
+  .#{$prefix}-12-12 {
+    width: 100% !important;
+  }
+
+  /**
+    * Tens
+    */
+  .#{$prefix}-1-10 {
+    width: 10% !important;
+  }
+  .#{$prefix}-2-10 {
+    width: 20% !important;
+  }
+  .#{$prefix}-3-10 {
+    width: 30% !important;
+  }
+  .#{$prefix}-4-10 {
+    width: 40% !important;
+  }
+  .#{$prefix}-5-10 {
+    width: 50% !important;
+  }
+  .#{$prefix}-6-10 {
+    width: 60% !important;
+  }
+  .#{$prefix}-7-10 {
+    width: 70% !important;
+  }
+  .#{$prefix}-8-10 {
+    width: 80% !important;
+  }
+  .#{$prefix}-9-10 {
+    width: 90% !important;
+  }
+  .#{$prefix}-10-10 {
+    width: 100% !important;
+  }
+}

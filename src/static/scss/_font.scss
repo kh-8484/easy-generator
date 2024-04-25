@@ -1,0 +1,41 @@
+$font-styles: normal, italic;
+$fonts: (
+  "Poppins-Black": 900,
+  "Poppins-BlackItalic": 900,
+  "Poppins-Bold": 700,
+  "Poppins-BoldItalic": 700,
+  "Poppins-ExtraBold": 800,
+  "Poppins-ExtraBoldItalic": 800,
+  "Poppins-ExtraLight": 200,
+  "Poppins-ExtraLightItalic": 200,
+  "Poppins-Italic": 400,
+  "Poppins-Light": 300,
+  "Poppins-LightItalic": 300,
+  "Poppins-Medium": 500,
+  "Poppins-MediumItalic": 500,
+  "Poppins-Regular": 400,
+  "Poppins-SemiBold": 600,
+  "Poppins-SemiBoldItalic": 600,
+  "Poppins-Thin": 100,
+  "Poppins-ThinItalic": 100,
+);
+
+@each $name, $weight in $fonts {
+  @each $style in $font-styles {
+    $font-style: if($style == "italic", "italic", "normal");
+    $font-weight: if($weight == 400, "regular", $weight);
+
+    @font-face {
+      font-family: "#{$name}";
+      font-style: #{$font-style};
+      font-weight: #{$font-weight};
+      src: url("../fonts/Poppins/#{$name}.ttf");
+    }
+
+    .font-#{$name}-#{$font-weight}-#{$style} {
+      font-family: "#{$name}", sans-serif;
+      font-weight: #{$weight};
+      font-style: #{$style};
+    }
+  }
+}

@@ -1,0 +1,34 @@
+.input-container {
+  position: relative;
+
+  .input-icon {
+    position: absolute;
+    top: 15px;
+    left: 20px;
+  }
+
+  input {
+    display: flex;
+    border: 1.6px solid #e0e2e9;
+    border-radius: 8px;
+    padding: 0 0 0 55px;
+    height: 45px;
+    outline: none;
+    max-width: 403px;
+    width: 26vw;
+
+    @media (max-width: 768px) {
+      width: 403px;
+    }
+
+    @media (max-width: 500px) {
+      width: 70vw;
+    }
+  }
+
+  .input-error-message {
+    color: red;
+    font-size: 11px;
+    margin: 5px 0 0 5px;
+  }
+}
